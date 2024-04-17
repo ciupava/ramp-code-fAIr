@@ -9,7 +9,7 @@
 import numpy as np
 import geopandas as gpd
 import pandas as pd
-from solaris.eval.iou import calculate_iou
+# from solaris.eval.iou import calculate_iou
 from pathlib import Path
 import os, sys
 

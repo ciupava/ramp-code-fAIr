@@ -188,7 +188,7 @@ The ramp codebase contains a python script, *ramp-code/scripts/make-train-val-sp
 python $RAMP_HOME/ramp-code/scripts/make_train_val_split_lists.py -src $RAMP_HOME/ramp-data/PREP/ghana/chips -pfx ghana_split -trn 0.85 -val 0.15
 ```
 
-This will produce two files in the current directory (RAMP_HOME/ramp-data/PREP/ghana), which will contain lists of randomly selected chips to use for training and validation. These files will be named 'ghana_split_train.csv' and 'ghana_split_val.csv'; the former will contain 85% of the chips, and the latter will contain 15%. 
+This will produce two files in the current directory (RAMP_HOME/ramp-data/PREP/ghana), which will contain lists of randomly selected chips to use for training and validation. These files will be named 'ghana_.csv' and 'ghana_split_val.csv'; the former will contain 85% of the chips, and the latter will contain 15%. 
 
 To move the TRAINING chips to the appropriate locations, call from RAMP_HOME:
 
@@ -196,11 +196,11 @@ To move the TRAINING chips to the appropriate locations, call from RAMP_HOME:
 
 # move all the TRAINING chips to their new locations
 
-python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/chips -td ramp-data/TRAIN/ghana/chips -csv ramp-data/PREP/ghana/ghana_split_train.csv -mv
+python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/chips -td ramp-data/TRAIN/ghana/chips -csv ramp-data/PREP/ghana/ghana_.csv -mv
 
-python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/labels -td ramp-data/TRAIN/ghana/labels -csv ramp-data/PREP/ghana/ghana_split_train.csv -mv
+python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/labels -td ramp-data/TRAIN/ghana/labels -csv ramp-data/PREP/ghana/ghana_.csv -mv
 
-python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/multimasks -td ramp-data/TRAIN/ghana/multimasks -csv ramp-data/PREP/ghana/ghana_split_train.csv -mv
+python ramp-code/scripts/move_chips_from_csv.py -sd ramp-data/PREP/ghana/multimasks -td ramp-data/TRAIN/ghana/multimasks -csv ramp-data/PREP/ghana/ghana_.csv -mv
 ```
 
 and to move the VALIDATION chips to the appropriate locations, call from RAMP_HOME:

@@ -11,7 +11,7 @@ import sys, os, re, argparse, csv, shutil, tqdm
 from pathlib import Path
 
 RAMP_HOME = os.environ['RAMP_HOME']
-
+sys.path.append('ramp-code')
 from ramp.utils.file_utils import move_training_data_files
 
 # adding logging

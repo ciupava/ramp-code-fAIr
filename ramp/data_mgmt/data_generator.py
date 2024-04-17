@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.python.ops.gen_batch_ops import batch
 from ..utils.ramp_exceptions import GdalReadError
+from ramp.utils.mask_to_vec_utils import sparse_multimask_to_onehot_mask
 import random
 
 # adding logging
@@ -194,13 +195,14 @@ def process_data(image, mask, img_shape, transforms):
 def reset_shapes(image, mask, image_shape):
   image.set_shape([*image_shape, 3])
   mask.set_shape([*image_shape,1])
+  # mask.set_shape([*image_shape,4])  ### EDITED HERE!
   return image, mask
 
   # END AUGMENTATION ADDITIONS
   ###########################################################################################
 
 
-def training_batches_from_gtiff_dirs(
+def training_batches_from_gtiff_dirs( 
     image_file_dir,
     mask_file_dir,
     batch_size, 
@@ -264,9 +266,19 @@ def training_batches_from_gtiff_dirs(
                                                     Tout = [tf.uint8])
     
     # resize the images and masks to the desired size.
+    # num_classes = 4
     images = image_ds.map(tf_load_image_fn).map(lambda x: resize_it(x, [*input_image_size, 3], output_image_size, 'bilinear'))
     masks = mask_ds.map(tf_load_mask_fn).map(lambda x: resize_it(x, [*input_image_size, 1], output_image_size,'nearest'))
+    
+    # E.g. OHE masks
+    # masks = mask_ds.map(tf_load_mask_fn).map(lambda x: resize_it(x, [*input_image_size, 1], output_image_size,'nearest')).map(lambda y: tf.one_hot(y[..., -1], 4, axis=-1))
 
+    # import IPython
+    # IPython.embed()
+    # masks = mask_ds.map(tf_load_mask_fn).map(lambda x: resize_it(x, [*input_image_size, 3], output_image_size,'nearest'))
+    # masks=mask_ds.map(tf_load_mask_fn).map(lambda x: tf.one_hot(x,num_classes))
+    # mask_ds.map(tf_load_mask_fn).map(lambda x:sparse_multimask_to_onehot_mask(num_classes,x))
+    ### EDITED HERE!
     # zip them together so the resulting dataset puts out a data element of the form (image, matching mask).
     zip_pairs = tf.data.Dataset.zip((images, masks), name=None)
 
@@ -353,8 +365,12 @@ def test_batches_from_gtiff_dirs(
                                                       Tout = [tf.uint8])
 
       # resize the images and masks to the desired size.
+      num_classes = 2
       images = image_ds.map(tf_load_image_fn).map(lambda x: resize_it(x, [*input_image_size, 3], output_image_size, 'bilinear'))
       masks = mask_ds.map(tf_load_mask_fn).map(lambda x: resize_it(x, (*input_image_size, 1), output_image_size,'nearest'))
+      # masks = mask_ds.map(tf_load_mask_fn).map(lambda x: resize_it(x, (*input_image_size, 3), output_image_size,'nearest'))
+      # masks = mask_ds.map(tf_load_mask_fn).map(lambda x: tf.one_hot(x, num_classes))
+      ### EDITED HERE!
 
       # zip them together so the resulting dataset puts out a data element of the form (image, matching mask).
       zip_pairs = tf.data.Dataset.zip((images, masks), name=None)
@@ -414,6 +430,8 @@ def test_batches_from_gtiff_dirs_with_names(
       # resize the images and masks to the desired size.
       images = image_ds.map(tf_load_image_fn).map(lambda x, pathname: resize_it_with_name(x, [*input_image_size, 3], output_image_size, 'bilinear', pathname))
       masks = mask_ds.map(tf_load_mask_fn).map(lambda x, pathname: resize_it_with_name(x, (*input_image_size, 1), output_image_size,'nearest', pathname))
+      # masks = mask_ds.map(tf_load_mask_fn).map(lambda x, pathname: resize_it_with_name(x, (*input_image_size, 3), output_image_size,'nearest', pathname))
+
 
       # zip them together so the resulting dataset puts out a data element of the form (image, matching mask).
       zip_pairs = tf.data.Dataset.zip((images, masks), name=None)

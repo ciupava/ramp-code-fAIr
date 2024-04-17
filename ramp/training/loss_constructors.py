@@ -23,6 +23,7 @@ def get_sparse_categorical_crossentropy_fn(cfg):
     '''
     return tf.keras.losses.sparse_categorical_crossentropy
 
+
 def get_custom_loss_fn(cfg):    
     '''
     returns the Google Africa custom loss function with given parameters.
@@ -43,7 +44,11 @@ def get_custom_loss_fn(cfg):
         return ftl_wt*ft_loss(y_true, y_hat)
     return custom_loss_fn
 
+def get_binary_crossentropy_fn(cfg):
+    return tf.keras.losses.BinaryCrossentropy()
 
+def get_categorical_crossentropy_fn(cfg):
+    return tf.keras.losses.CategoricalCrossentropy()
 
 def get_weighted_SCCE_loss_fn(cfg):
     '''

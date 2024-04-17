@@ -1,2 +1,13 @@
 dist/
 *.egg-info/
+ramp/checkpoint.tf/
+ramp/checkpoint.tf/desktop.ini
+ramp/checkpoint.tf/keras_metadata.pb
+ramp/checkpoint.tf/variables
+ramp/checkpoint.tf/variables/*
+ramp/checkpoint.tf/variables/variables.data-00000-of-00001
+ramp/checkpoint.tf/variables/variables.desktop.ini
+ramp/checkpoint.tf/variables/variables/variables/index
+
+# to upload the empty folder
+!rampcheckpoint.tf/variables/.gitkeep 

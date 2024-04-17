@@ -39,7 +39,7 @@ def main():
     Create randomized lists of files for training and validation datasets, and save them to files.
     Test datasets should already have been set aside.
 
-    Example: make_train_val_split_lists.py -src chips -trn 0.85 -val 0.15
+    Example: make_train_val_split_lists.py -src chips -trn 0.70 -val 0.15 -prd 0.15
     """,
         formatter_class=argparse.RawTextHelpFormatter,
     )
@@ -73,17 +73,26 @@ def main():
         default=0.0,
         help="fraction of files to assign to validation set",
     )
+    parser.add_argument(
+        "-prd",
+        "--pred_fraction",
+        type=float,
+        required=True,
+        help="fraction of files to assign to prediction set",
+    )
     args = parser.parse_args()
 
     trn = args.train_fraction
     val = args.val_fraction
+    prd = args.pred_fraction
 
     # force fractions to sum to 1
-    normalizer = trn + val
+    normalizer = trn + val + prd
     if normalizer == 0.0:
-        raise ValueError("train and validation fractions must sum to 1")
+        raise ValueError("train, validation and prediction fractions must sum to 1")
     trn = trn / normalizer
     val = val / normalizer
+    prd = prd / normalizer
 
     # check that source directory exists and is readable
     src_dir = args.src_dir
@@ -94,6 +103,7 @@ def main():
     file_rootname = args.list_prefix
     trn_csv = file_rootname + "_train.csv"
     val_csv = file_rootname + "_val.csv"
+    prd_csv = file_rootname + "_pred.csv"
 
     # construct list of all filenames in src dir, shuffle in place
     files = list(Path(src_dir).glob("**/*"))
@@ -108,11 +118,18 @@ def main():
     if numval < 1:
         numval = 1
     log.debug(f"Num of validation {numval}")
-    numtrain = numfiles - numval
+    
+    numprd = int(prd * numfiles)
+    if numprd < 1:
+        numprd = 1
+    log.debug(f"Num of prd {numprd}")
+    
+    numtrain = numfiles - numval - numprd
     log.debug(f"No of trainings files {numtrain}")
 
     trainlist = files[:numtrain]
-    vallist = files[numtrain:]
+    vallist = files[numtrain:numtrain+numval]
+    prdlist = files[numtrain+numval:]
 
     with open(trn_csv, "w") as trnfp:
         log.info(f"Writing {trn_csv}")
@@ -122,6 +139,12 @@ def main():
         with open(val_csv, "w") as valfp:
             log.info(f"Writing {val_csv}")
             valfp.write("\n".join([str(item) for item in vallist]))
+
+    if numprd != 0:
+        with open(prd_csv, "w") as prdfp:
+            log.info(f"Writing {prd_csv}")
+            prdfp.write("\n".join([str(item) for item in prdlist]))
+
 
 
 if __name__ == "__main__":
