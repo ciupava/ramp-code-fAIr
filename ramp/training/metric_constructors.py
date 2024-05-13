@@ -6,6 +6,8 @@
 #################################################################
 
 import tensorflow as tf
+import tensorflow_addons as tfa
+
 # adding logging
 import logging
 import functools
@@ -64,6 +66,25 @@ def get_recall_fn(cfg):
         name="recall_1"
         # thresholds=None,top_k=None, class_id=None, name=None, dtype=None
     )
+
+def get_f1_score_fn(cfg):
+    # ---
+    return tfa.metrics.F1Score(
+        num_classes=4,
+        average='macro',
+        threshold=0.5,
+        name="f1score"
+    # ---
+    # return tf.keras.metrics.F1Score(
+    #     name="f1score",
+    #     average='macro'
+    # ---
+    # def f1_m(y_true, y_pred):
+    # precision = precision_m(y_true, y_pred)
+    # recall = recall_m(y_true, y_pred)
+    # return 2*((precision*recall)/(precision+recall+K.epsilon()))
+    )
+
 #---
 
 def get_mse_fn(cfg):
